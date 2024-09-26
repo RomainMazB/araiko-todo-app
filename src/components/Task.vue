@@ -5,7 +5,6 @@ import TaskDropdown from '@/components/TaskDropdown.vue'
 import TaskList from '@/components/TaskList.vue'
 import {newTask} from '@/helpers'
 import EditTaskForm from '@/components/EditTaskForm.vue'
-import Task from '@/components/Task.vue'
 
 interface Props {
   createdAt: Date

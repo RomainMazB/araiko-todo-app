@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import {reactive} from 'vue'
+import {computed, reactive} from 'vue'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import CreateTask from '@/components/CreateTask.vue'
 import TaskList from '@/components/TaskList.vue'
 import Task from '@/components/Task.vue'
+import Importer from '@/components/Importer.vue'
 import {newTask} from '@/helpers'
 
 const tasks = reactive<Task[]>([])
@@ -12,6 +13,12 @@ const tasks = reactive<Task[]>([])
 function addTask(text: string): void {
   tasks.push(newTask(text))
 }
+
+function importTasks(importedTasks: Task[]): void {
+  tasks.push(...importedTasks)
+}
+
+const noTasksYet = computed(() => tasks.length === 0)
 </script>
 
 <template>
@@ -19,7 +26,7 @@ function addTask(text: string): void {
     <Header/>
 
     <main class="flex-1 mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 pt-12 w-full">
-      <div class="text-center" v-if="tasks.length === 0">
+      <div class="text-center" v-if="noTasksYet">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
              stroke="currentColor" class="mx-auto h-12 w-12 text-gray-400">
           <path stroke-linecap="round" stroke-linejoin="round"
@@ -28,13 +35,15 @@ function addTask(text: string): void {
         <h2 class="mt-2 text-base font-semibold leading-6 text-gray-900">Start your journey</h2>
         <p class="mt-1 text-sm text-gray-500">
           You haven't created any task yet.<br>
-          Create your first task to start!
+          Create your first task to start or use our JSON import tool!
         </p>
       </div>
 
       <TaskList v-else v-model="tasks" id="root-list"/>
 
       <CreateTask @create="addTask" :can-abort="false"/>
+
+      <Importer v-if="noTasksYet" @tasksImported="importTasks"/>
     </main>
 
     <Footer/>
