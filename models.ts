@@ -1,5 +1,5 @@
 interface Task {
     text: string
     isDone: boolean
-    subTasks: Task[]
+    subtasks: Task[]
 }
