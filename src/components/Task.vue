@@ -9,7 +9,7 @@ import Task from '@/components/Task.vue'
 
 interface Props {
   createdAt: Date
-  doneAt: Date|undefined
+  doneAt: Date | undefined
 }
 
 defineProps<Props>()
@@ -100,59 +100,61 @@ const id = useId()
 </script>
 
 <template>
-  <!-- Add task before form -->
-  <CreateTask v-if="beforeFormIsDisplayed"
-              @aborted="beforeFormIsDisplayed = false"
-              @create="$emit('addTaskBefore', $event); hideForms()"
-  />
+  <div class="w-full">
+    <!-- Add task before form -->
+    <CreateTask v-if="beforeFormIsDisplayed"
+                @aborted="beforeFormIsDisplayed = false"
+                @create="$emit('addTaskBefore', $event); hideForms()"
+    />
 
-  <div class="task-card w-full">
-    <!-- Task card with its dropdown and "is done" checkbox-->
-    <div class="flex space-x-3 justify-between">
-      <div class="flex flex-col w-full">
-        <div class="relative flex items-center w-full space-x-2">
-          <input :id="`task-${id}`"
-                 type="checkbox"
-                 class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                 v-model="isDone"
-                 :disabled="hasUndoneSubtasks"
-          >
+    <div class="task-card w-full">
+      <!-- Task card with its dropdown and "is done" checkbox-->
+      <div class="flex space-x-3 justify-between">
+        <div class="flex flex-col w-full">
+          <div class="relative flex items-center w-full space-x-2">
+            <input :id="`task-${id}`"
+                   type="checkbox"
+                   class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                   v-model="isDone"
+                   :disabled="hasUndoneSubtasks"
+            >
 
-          <EditTaskForm v-model="text"/>
+            <EditTaskForm v-model="text"/>
 
-          <!-- Task actions dropdown -->
-          <TaskDropdown @addSubtaskClicked="displaySubtaskForm"
-                        @addBeforeClicked="displayBeforeForm"
-                        @addAfterClicked="displayAfterForm"
-                        @deleteClicked="$emit('delete')"
-                        @markAllSubtasksAsDoneClicked="markAllSubtasksAsDone(subtasks)"
-          />
-        </div>
+            <!-- Task actions dropdown -->
+            <TaskDropdown @addSubtaskClicked="displaySubtaskForm"
+                          @addBeforeClicked="displayBeforeForm"
+                          @addAfterClicked="displayAfterForm"
+                          @deleteClicked="$emit('delete')"
+                          @markAllSubtasksAsDoneClicked="markAllSubtasksAsDone(subtasks)"
+            />
+          </div>
 
-        <div class="mt-1 ml-6 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-          <p>
-            Created at: {{ createdAt.toLocaleDateString() }} {{ createdAt.toLocaleTimeString() }}
-          </p>
-          <p v-if="doneAt">
-            Done at: {{ doneAt.toLocaleDateString() }} {{ doneAt.toLocaleTimeString() }}
-          </p>
+          <div class="mt-1 ml-6 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
+            <p>
+              Created at: {{ createdAt.toLocaleDateString() }} {{ createdAt.toLocaleTimeString() }}
+            </p>
+            <p v-if="doneAt">
+              Done at: {{ doneAt.toLocaleDateString() }} {{ doneAt.toLocaleTimeString() }}
+            </p>
+          </div>
         </div>
       </div>
+
+      <!-- Subtasks list -->
+      <TaskList v-model="subtasks" class="ml-4"/>
+
+      <!-- Subtask creation form -->
+      <CreateTask v-if="subtaskFormIsDisplayed"
+                  @aborted="subtaskFormIsDisplayed = false"
+                  @create="addSubtask($event); hideForms()"
+      />
     </div>
 
-    <!-- Subtasks list -->
-    <TaskList v-model="subtasks" class="ml-4"/>
-
-    <!-- Subtask creation form -->
-    <CreateTask v-if="subtaskFormIsDisplayed"
-                @aborted="subtaskFormIsDisplayed = false"
-                @create="addSubtask($event); hideForms()"
+    <!-- Add task after form -->
+    <CreateTask v-if="afterFormIsDisplayed"
+                @aborted="afterFormIsDisplayed = false"
+                @create="$emit('addTaskAfter', $event); hideForms()"
     />
   </div>
-
-  <!-- Add task after form -->
-  <CreateTask v-if="afterFormIsDisplayed"
-              @aborted="afterFormIsDisplayed = false"
-              @create="$emit('addTaskAfter', $event); hideForms()"
-  />
 </template>
