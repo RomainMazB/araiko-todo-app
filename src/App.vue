@@ -6,6 +6,26 @@ import CreateTask from '@/components/CreateTask.vue'
 import TaskList from '@/components/TaskList.vue'
 
 const tasks = reactive<Task[]>([])
+
+function newTask(text: string) {
+  return {
+    text,
+    isDone: false,
+    subTask: []
+  }
+}
+
+function addTask (text: string): void {
+  tasks.push(newTask(text))
+}
+
+function addTaskAt (text: string, position: number): void {
+  tasks.splice(position, 0, newTask(text))
+}
+
+function deleteTask (position: number): void {
+  tasks.splice(position, 1)
+}
 </script>
 
 <template>
@@ -27,10 +47,15 @@ const tasks = reactive<Task[]>([])
           </p>
         </div>
 
-        <CreateTask class="mt-6"/>
+        <CreateTask @create="addTask" :can-abort="false"/>
       </template>
 
-      <TaskList v-else :tasks="tasks"/>
+      <TaskList v-else
+                :tasks="tasks"
+                @taskAdded="addTask"
+                @taskAddedAt="addTaskAt"
+                @deleteTask="deleteTask"
+      />
     </main>
 
     <Footer/>

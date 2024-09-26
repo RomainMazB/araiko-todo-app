@@ -1,31 +1,32 @@
 <script setup lang="ts">
+import Task from '@/components/Task.vue'
+import CreateTask from '@/components/CreateTask.vue'
+
 interface Props {
   tasks: Task[]
 }
 
 defineProps<Props>()
+defineEmits<{
+  taskAdded: [text: string]
+  taskAddedAt: [text: string, position: number]
+  deleteTask: [position: number]
+}>()
 </script>
 
 <template>
   <ul role="list" class="space-y-3">
-    <li v-for="task in tasks"
-        :key="task.id"
-        class="overflow-hidden bg-white px-4 py-4 shadow sm:rounded-md sm:px-6"
-    >
-      <div class="relative">
-        <div class="absolute inset-0 flex items-center" aria-hidden="true">
-          <div class="w-full border-t border-gray-300"></div>
-        </div>
+    <li v-for="(task, index) in tasks" :key="task">
+      <Task :task="task"
+            :should-display-after-button="index+1 < tasks.length"
+            @addTaskBefore="$emit('taskAddedAt', $event, index)"
+            @addTaskAfter="$emit('taskAddedAt', $event, index+1)"
+            @deleteTask="$emit('deleteTask', index)"
+      />
+    </li>
 
-        <div class="relative flex justify-center">
-          <button type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-            <svg class="-ml-1 -mr-0.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-            </svg>
-            Add task
-          </button>
-        </div>
-      </div>
+    <li>
+      <CreateTask @create="$emit('taskAdded', $event)" :can-abort="false"/>
     </li>
   </ul>
 </template>
