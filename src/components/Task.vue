@@ -7,10 +7,18 @@ import {newTask} from '@/helpers'
 import EditTaskForm from '@/components/EditTaskForm.vue'
 import Task from '@/components/Task.vue'
 
+interface Props {
+  createdAt: Date
+  doneAt: Date|undefined
+}
+
+defineProps<Props>()
+
 const emit = defineEmits<{
   addTaskBefore: [task: string]
   addTaskAfter: [task: string]
   delete: void
+  markedDone: void
   markedAsUndone: void
 }>()
 
@@ -26,18 +34,33 @@ function addSubtask(text: string): void {
   subtasks.value.push(newTask(text))
 }
 
+// Recursively mark all subtasks as done
 function markAllSubtasksAsDone(subtasks: Ref<Task[]>): void {
+  const now = new Date
+
   subtasks.forEach((subtask: Ref<Task>) => {
+    // Avoid overwriting existing doneAt dates
+    if (subtask.doneAt === undefined) {
+      subtask.doneAt = now
+    }
+
     subtask.isDone = true
+
     markAllSubtasksAsDone(subtask.subtasks)
   })
 
   isDone.value = true
 }
 
-watch(() => isDone.value, (newVal: boolean) => newVal && emit('markedAsUndone'))
+watch(() => isDone.value, function (newVal: boolean) {
+  if (newVal) {
+    emit('markedAsDone')
+  } else {
+    emit('markedAsUndone')
+  }
+})
 
-watch(hasUndoneSubtasks, (newVal: boolean) => {
+watch(hasUndoneSubtasks, function (newVal: boolean) {
   if (newVal) {
     isDone.value = false
   }
@@ -86,24 +109,35 @@ const id = useId()
   <div class="task-card">
     <!-- Task card with its dropdown and "is done" checkbox-->
     <div class="flex space-x-3 justify-between">
-      <div class="relative flex items-center w-full">
-        <input :id="`task-${id}`"
-               type="checkbox"
-               class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-               v-model="isDone"
-               :disabled="hasUndoneSubtasks"
-        >
+      <div class="flex flex-col w-full">
+        <div class="relative flex items-center w-full space-x-2">
+          <input :id="`task-${id}`"
+                 type="checkbox"
+                 class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                 v-model="isDone"
+                 :disabled="hasUndoneSubtasks"
+          >
 
-        <EditTaskForm v-model="text"/>
+          <EditTaskForm v-model="text"/>
+
+          <!-- Task actions dropdown -->
+          <TaskDropdown @addSubtaskClicked="displaySubtaskForm"
+                        @addBeforeClicked="displayBeforeForm"
+                        @addAfterClicked="displayAfterForm"
+                        @deleteClicked="$emit('delete')"
+                        @markAllSubtasksAsDoneClicked="markAllSubtasksAsDone(subtasks)"
+          />
+        </div>
+
+        <div class="mt-1 ml-6 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
+          <p>
+            Created at: {{ createdAt.toLocaleDateString() }} {{ createdAt.toLocaleTimeString() }}
+          </p>
+          <p v-if="doneAt">
+            Done at: {{ doneAt.toLocaleDateString() }} {{ doneAt.toLocaleTimeString() }}
+          </p>
+        </div>
       </div>
-
-      <!-- Task actions dropdown -->
-      <TaskDropdown @addSubtaskClicked="displaySubtaskForm"
-                    @addBeforeClicked="displayBeforeForm"
-                    @addAfterClicked="displayAfterForm"
-                    @deleteClicked="$emit('delete')"
-                    @markAllSubtasksAsDoneClicked="markAllSubtasksAsDone(subtasks)"
-      />
     </div>
 
     <!-- Subtasks list -->

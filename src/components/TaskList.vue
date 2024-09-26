@@ -24,10 +24,15 @@ defineEmits<{
         <Task v-model:text="task.text"
               v-model:is-done="task.isDone"
               v-model:subtasks="task.subtasks"
+
               @addTaskBefore="addTaskAt($event, index)"
               @addTaskAfter="addTaskAt($event, index+1)"
               @delete="deleteTask(index)"
-              @markedAsUndone="$emit('oneSubtaskMarkedAsUndone')"
+              @markedAsUndone="task.doneAt = undefined; $emit('oneSubtaskMarkedAsUndone')"
+              @markedAsDone="task.doneAt = new Date"
+
+              :created-at="task.createdAt"
+              :done-at="task.doneAt"
         />
       </div>
     </li>
