@@ -106,7 +106,7 @@ const id = useId()
               @create="$emit('addTaskBefore', $event); hideForms()"
   />
 
-  <div class="task-card">
+  <div class="task-card w-full">
     <!-- Task card with its dropdown and "is done" checkbox-->
     <div class="flex space-x-3 justify-between">
       <div class="flex flex-col w-full">

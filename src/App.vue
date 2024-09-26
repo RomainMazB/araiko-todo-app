@@ -42,7 +42,7 @@ function addTask(text: string): void {
 </template>
 
 <style>
-ul#root-list > li > .task > .task-card {
+ul#root-list > li > .task > div > .task-card {
   @apply w-full max-w-5xl px-4 py-4 shadow sm:rounded-md sm:px-6
 }
 </style>
