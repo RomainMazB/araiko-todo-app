@@ -15,10 +15,6 @@ function addTask(text: string): void {
   tasks.push(newTask(text))
 }
 
-function importTasks(importedTasks: Task[]): void {
-  tasks.push(...importedTasks)
-}
-
 const noTasksYet = computed(() => tasks.length === 0)
 </script>
 
@@ -44,7 +40,7 @@ const noTasksYet = computed(() => tasks.length === 0)
 
       <CreateTask @create="addTask" :can-abort="false"/>
 
-      <Importer v-if="noTasksYet" @tasksImported="importTasks"/>
+      <Importer v-if="noTasksYet" v-model="tasks"/>
 
       <Exporter v-else :tasks="tasks"/>
     </main>
