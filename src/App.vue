@@ -7,6 +7,7 @@ import TaskList from '@/components/TaskList.vue'
 import Task from '@/components/Task.vue'
 import Importer from '@/components/Importer.vue'
 import {newTask} from '@/helpers'
+import Exporter from '@/components/Exporter.vue'
 
 const tasks = reactive<Task[]>([])
 
@@ -44,6 +45,8 @@ const noTasksYet = computed(() => tasks.length === 0)
       <CreateTask @create="addTask" :can-abort="false"/>
 
       <Importer v-if="noTasksYet" @tasksImported="importTasks"/>
+
+      <Exporter v-else :tasks="tasks"/>
     </main>
 
     <Footer/>
