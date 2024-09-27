@@ -72,7 +72,7 @@ function importTasks(event: Event) {
     return
   }
 
-  fileReader.readAsText(file);
+  fileReader.readAsText(file)
 }
 </script>
 

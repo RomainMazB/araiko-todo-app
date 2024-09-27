@@ -16,10 +16,11 @@ function deleteTask (position: number): void {
   model.value.splice(position, 1)
 }
 
+// Move an array item from a position to another one
 function moveItem(fromIndex, toIndex) {
-  const element = model.value[fromIndex];
-  model.value.splice(fromIndex, 1);
-  model.value.splice(toIndex, 0, element);
+  const element = model.value[fromIndex]
+  model.value.splice(fromIndex, 1)
+  model.value.splice(toIndex, 0, element)
 }
 const moveDown = (idx: number): void => moveItem(idx, idx+1)
 const moveUp = (idx: number): void => moveItem(idx, idx-1)
