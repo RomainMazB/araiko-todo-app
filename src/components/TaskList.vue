@@ -29,13 +29,18 @@ const moveUp = (idx: number): void => moveItem(idx, idx-1)
 
 <template>
   <TransitionGroup name="list" tag="ul" role="list" class="space-y-3">
-    <li v-for="(task, index) in modelValue" :key="task">
+    <li v-for="(task, index) in modelValue" :key="task" class="group">
       <div class="task">
         <div class="flex space-x-2">
           <div>
             <!-- Move up button -->
-            <button type="button" @click="moveUp(index)" class="block transition-opacity" :disabled="index === 0"
-                    :class="{'opacity-0': index === 0}"
+            <button type="button" @click="moveUp(index)"
+                    :disabled="index === 0"
+                    class="block transition-opacity"
+                    :class="{
+                      'opacity-0': index === 0,
+                      ' opacity-0 group-hover:opacity-100': index !== 0
+                    }"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
@@ -43,8 +48,13 @@ const moveUp = (idx: number): void => moveItem(idx, idx-1)
             </button>
 
             <!-- Move down button -->
-            <button type="button" @click="moveDown(index)" class="block transition-opacity" :disabled="index === modelValue.length - 1"
-                    :class="{'opacity-0': index === modelValue.length - 1}"
+            <button type="button" @click="moveDown(index)"
+                    :disabled="index === modelValue.length - 1"
+                    class="block transition-opacity"
+                    :class="{
+                      'opacity-0': index === modelValue.length - 1,
+                      ' opacity-0 group-hover:opacity-100': index !== modelValue.length - 1
+                    }"
             >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5">
               <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
